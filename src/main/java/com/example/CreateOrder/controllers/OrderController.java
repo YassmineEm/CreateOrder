@@ -1,0 +1,99 @@
+package com.example.CreateOrder.controllers;
+import com.example.CreateOrder.client.OrderClient;
+import com.example.CreateOrder.exceptions.ProductNotFoundException;
+import com.example.CreateOrder.models.Order;
+import com.example.CreateOrder.models.Product;
+import com.example.CreateOrder.models.ProductResponse;
+import com.example.CreateOrder.services.OrderService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.PagedModel;
+import org.springframework.http.CacheControl;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
+@RestController
+@CrossOrigin(origins = "*")
+@RequestMapping("/orders")
+public class OrderController {
+
+    @Autowired
+    private OrderService orderService;
+
+    @Autowired
+    private OrderClient orderClient;
+
+    @GetMapping(produces = {"application/json", "application/xml"})
+    public ResponseEntity<PagedModel<EntityModel<Order>>> getAllOrders(Pageable pageable) {
+
+        Page<Order> ordersPage = orderService.allOrders(pageable);
+        List<EntityModel<Order>> orderModels = ordersPage.getContent().stream()
+                .map(this::createOrderEntityModel)
+                .collect(Collectors.toList());
+        PagedModel.PageMetadata pageMetadata = new PagedModel.PageMetadata(
+                ordersPage.getSize(),
+                ordersPage.getNumber(),
+                ordersPage.getTotalElements(),
+                ordersPage.getTotalPages());
+        Link linkToAllOrders = linkTo(methodOn(OrderController.class).getAllOrders(pageable)).withSelfRel();
+
+        PagedModel<EntityModel<Order>> pagedModel = PagedModel.of(orderModels, pageMetadata, linkToAllOrders);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setCacheControl(CacheControl.noCache());
+        return ResponseEntity.ok().headers(headers).body(pagedModel);
+    }
+
+    private EntityModel<Order> createOrderEntityModel(Order order) {
+        return EntityModel.of(order,
+                linkTo(methodOn(OrderController.class).getAllOrders(null)).withSelfRel()
+        );
+    }
+
+    @GetMapping(value = "/{id}", produces = {"application/json", "application/xml"})
+    public ResponseEntity<EntityModel<Order>> getSingleOrder(@PathVariable String id) {
+        return orderService.singleOrder(id)
+                .map(this::createOrderEntityModel)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PostMapping
+    public ResponseEntity<EntityModel<Order>> createOrder(@RequestBody Order order) {
+        try {
+
+            System.out.println("Client sends create order request for product ID: " + order.getProductId());
+            ProductResponse productResponse = orderClient.getProductById(order.getProductId());
+
+            Product product = new Product();
+            product.setId(productResponse.getProductId());
+            product.setName(productResponse.getName());
+            product.setDescription(productResponse.getDescription());
+            product.setPrice(productResponse.getPrice());
+            product.setQuantity(productResponse.getQuantity());
+
+
+        
+        Order createdOrder = orderService.createAndProcessOrder(product, order);
+
+        System.out.println("Returning order response to client with ID: " + createdOrder.getId() +
+                " and state: " + createdOrder.getState());
+
+        return ResponseEntity.ok(EntityModel.of(createdOrder,
+                linkTo(methodOn(OrderController.class).getSingleOrder(createdOrder.getId())).withSelfRel()));
+    }catch(ProductNotFoundException ex){
+            throw ex;
+        }}
+
+
+    }
