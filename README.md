@@ -41,6 +41,10 @@ Créer la base de données MySQL :
 ```sql
 CREATE DATABASE createOrder1;
 
+💡 Assurez-vous que les identifiants MySQL dans application.properties correspondent à votre installation :
+spring.datasource.username=your_username
+spring.datasource.password=your_password
+
 ## Kafka Setup 🚀
 # 1. Démarrer Zookeeper (service de coordination)
 bin/zookeeper-server-start.sh config/zookeeper.properties
