@@ -40,14 +40,25 @@ Créer la base de données MySQL :
 
 ```sql
 CREATE DATABASE createOrder1;
+```
 
-💡 Assurez-vous que les identifiants MySQL dans application.properties correspondent à votre installation :
+**💡 Configuration importante**  
+Assurez-vous que les identifiants MySQL dans `application.properties` correspondent à votre installation :
+```properties
 spring.datasource.username=your_username
 spring.datasource.password=your_password
+```
 
-## Kafka Setup 🚀
-# 1. Démarrer Zookeeper (service de coordination)
+---
+
+## Kafka Setup �
+
+### 1. Démarrer Zookeeper (service de coordination)
+```bash
 bin/zookeeper-server-start.sh config/zookeeper.properties
+```
 
-# 2. Démarrer Kafka (dans une nouvelle fenêtre/terminal)
+### 2. Démarrer Kafka (dans une nouvelle fenêtre/terminal)
+```bash
 bin/kafka-server-start.sh config/server.properties
+```
