@@ -40,3 +40,11 @@ Créer la base de données MySQL :
 
 ```sql
 CREATE DATABASE createOrder1;
+
+## Kafka Setup 🚀
+```bash
+# 1. Démarrer Zookeeper (service de coordination)
+bin/zookeeper-server-start.sh config/zookeeper.properties
+
+# 2. Démarrer Kafka (dans une nouvelle fenêtre/terminal)
+bin/kafka-server-start.sh config/server.properties
