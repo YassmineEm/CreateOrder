@@ -2,7 +2,7 @@
 
 A distributed order management system using **Spring Boot**, **gRPC**, and **Kafka** to handle order creation with product availability checks.
 
-![Architecture Diagram](image.png) <!-- Replace with actual diagram if available -->
+![Architecture Create Order](CreateOrder.PNG)
 
 ## Features ✨
 - **gRPC Communication**: Fetch product details from Product Service
