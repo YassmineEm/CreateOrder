@@ -32,4 +32,4 @@ A distributed order management system using **Spring Boot**, **gRPC**, and **Kaf
 ### Setup
 1. **Clone Repository**
    ```bash
-   git clone https://github.com/yourusername/create-order-service.git
+   git clone https://github.com/YassmineEm/CreateOrder.git
