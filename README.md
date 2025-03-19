@@ -62,3 +62,17 @@ bin/zookeeper-server-start.sh config/zookeeper.properties
 ```bash
 bin/kafka-server-start.sh config/server.properties
 ```
+
+## Build & Run ⚙️
+
+Exécutez ces commandes depuis la racine du projet :
+
+```bash
+./mvnw clean install
+```
+
+Puis lancer l'application avec :
+
+```bash
+./mvnw spring-boot:run
+```
