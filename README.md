@@ -33,3 +33,10 @@ A distributed order management system using **Spring Boot**, **gRPC**, and **Kaf
 1. **Clone Repository**
    ```bash
    git clone https://github.com/YassmineEm/CreateOrder.git
+
+## Database Setup 🗃️
+
+Créer la base de données MySQL :
+
+```sql
+CREATE DATABASE createOrder1;
